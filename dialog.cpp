@@ -30,7 +30,7 @@ void Dialog::onTimerTimeout() {
 }
 
 
-void Dialog::on_lineEdit_textEdited([[maybe_unused]] const QString &cur_text) {
+void Dialog::on_lineEdit_textEdited(const QString &cur_text) {
     cur_input = cur_text;
     timer->start(300);
 }
