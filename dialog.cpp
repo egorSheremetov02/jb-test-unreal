@@ -26,7 +26,7 @@ Dialog::~Dialog() {
 }
 
 void Dialog::onTimerTimeout() {
-    model->set_substring(cur_input);
+    model->setSubstring(cur_input);
 }
 
 

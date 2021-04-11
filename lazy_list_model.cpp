@@ -20,25 +20,25 @@ LazyWordList::LazyWordList(QObject *parent, QString const &file_path)
         QTextStream in(&inputFile);
         while (!in.atEnd()) {
            QString line = in.readLine();
-           filtered_list.append(line);
-           all_words.append(line);
+           filteredList.append(line);
+           allWords.append(line);
         }
         inputFile.close();
     }
 }
 
 int LazyWordList::rowCount(const QModelIndex & /* parent */) const {
-    return words_count;
+    return wordsCount;
 }
 
 QVariant LazyWordList::data(const QModelIndex &index, int role) const {
     if (!index.isValid())
         return QVariant();
 
-    if (index.row() >= filtered_list.size() || index.row() < 0)
+    if (index.row() >= filteredList.size() || index.row() < 0)
         return QVariant();
     if (role == Qt::DisplayRole) {
-        return filtered_list[index.row()];
+        return filteredList[index.row()];
     } else if (role == Qt::BackgroundRole) {
         return rand() & 1 ? qApp->palette().base() : qApp->palette().alternateBase();
     }
@@ -47,7 +47,7 @@ QVariant LazyWordList::data(const QModelIndex &index, int role) const {
 }
 
 bool LazyWordList::canFetchMore(const QModelIndex & /* index */) const {
-    if (words_count < filtered_list.size()) {
+    if (wordsCount < filteredList.size()) {
         return true;
     } else {
         return false;
@@ -55,27 +55,27 @@ bool LazyWordList::canFetchMore(const QModelIndex & /* index */) const {
 }
 
 void LazyWordList::fetchMore(const QModelIndex & /* index */) {
-    int remainder = filtered_list.size() - words_count;
-    int itemsToFetch = qMin(1000, remainder);
+    int remainder = filteredList.size() - wordsCount;
+    int wordsToFetch = qMin(1000, remainder);
 
-    beginInsertRows(QModelIndex(), words_count, words_count + itemsToFetch - 1);
-    words_count += itemsToFetch;
+    beginInsertRows(QModelIndex(), wordsCount, wordsCount + wordsToFetch - 1);
+    wordsCount += wordsToFetch;
     endInsertRows();
 
-    emit numberPopulated(itemsToFetch);
+    emit numberPopulated(wordsToFetch);
 }
 
-void LazyWordList::set_substring(const QString &s) {
+void LazyWordList::setSubstring(const QString &s) {
     substring = s.toStdString();
 
     beginResetModel();
     BoyerMoore bm(substring);
 
-    filtered_list.clear();
+    filteredList.clear();
 
-    for (int j = 0; j < all_words.size(); ++j) {
-        QString t_qt = all_words[j];
-        std::string t = t_qt.toStdString();
+    for (int j = 0; j < allWords.size(); ++j) {
+        QString tq = allWords[j];
+        std::string t = tq.toStdString();
         if (t.size() < substring.size()) {
             continue;
         }
@@ -88,15 +88,15 @@ void LazyWordList::set_substring(const QString &s) {
         }
 
         if (ps == (int) substring.size()) {
-            filtered_list.append(t_qt);
+            filteredList.append(tq);
             continue;
         }
         */
 
 
         // Substring check using boyer-moore algorithm (in average works in O(t.size() / substring.size()))
-        if (bm.check_substring(t)) {
-            filtered_list.append(t_qt);
+        if (bm.checkSubstring(t)) {
+            filteredList.append(tq);
         }
     }
 
@@ -119,19 +119,19 @@ void LazyWordList::set_substring(const QString &s) {
             }
 
             if (ps == (int) substring.size()) {
-                filtered_list.append(t_qt);
+                filteredList.append(t_qt);
                 continue;
             }
 
 
             // Substring check using boyer-moore algorithm (in average works in O(t.size() / substring.size()))
-            if (bm.check_substring(t)) {
-                filtered_list.append(t_qt);
+            if (bm.checkSubstring(t)) {
+                filteredList.append(t_qt);
             }
         }
         inputFile.close();
     }
     */
-    words_count = 0;
+    wordsCount = 0;
     endResetModel();
 }

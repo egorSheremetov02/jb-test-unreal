@@ -18,21 +18,17 @@ signals:
     void numberPopulated(int number);
 
 public slots:
-    void set_substring(const QString &s);
+    void setSubstring(const QString &s);
 
 protected:
     bool canFetchMore(const QModelIndex &parent) const override;
     void fetchMore(const QModelIndex &parent) override;
 
 private:
-//    QStringList words_list;
-    QStringList filtered_list;
-    QStringList all_words;
+    QStringList filteredList;
+    QStringList allWords;
     std::string substring;
-    int words_count;
-//    std::vector<int> zeta_function;
-//    std::vector<std::vector<int>> pos;
-//    std::vector<int> shift;
+    int wordsCount{};
 };
 
 #endif // LAZY_LIST_MODEL_H
